@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Mail, Lock, User, Loader2, Stethoscope, Heart } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 interface RegisterFormProps {
   onSwitchToLogin: () => void;
@@ -21,6 +23,8 @@ const RegisterForm = ({ onSwitchToLogin }: RegisterFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [role, setRole] = useState<UserRole>("patient");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const { signUp } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,14 +67,26 @@ const RegisterForm = ({ onSwitchToLogin }: RegisterFormProps) => {
 
     setIsLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+    const { error } = await signUp(email, password, name, role);
+    
+    setIsLoading(false);
+    
+    if (error) {
       toast({
-        title: "Account Created!",
-        description: "Welcome to the Wellness Marketplace. Please check your email to verify your account.",
+        title: "Registration Failed",
+        description: error.message === "User already registered" 
+          ? "An account with this email already exists. Please sign in instead."
+          : error.message,
+        variant: "destructive",
       });
-    }, 1500);
+      return;
+    }
+    
+    toast({
+      title: "Account Created!",
+      description: "Welcome to WellnessHub! Redirecting to your dashboard...",
+    });
+    navigate("/dashboard");
   };
 
   return (
