@@ -9,10 +9,31 @@ import wellnessMeditation from "@/assets/wellness-meditation.jpg";
 import wellnessOils from "@/assets/wellness-oils.jpg";
 import wellnessAcupuncture from "@/assets/wellness-acupuncture.jpg";
 import wellnessHerbs from "@/assets/wellness-herbs.jpg";
+import BookingModal from "@/components/BookingModal";
+
+interface Therapist {
+  id: number;
+  name: string;
+  specialty: string;
+  rating: number;
+  reviews: number;
+  location: string;
+  experience: string;
+  price: string;
+  image: string;
+  available: boolean;
+}
 
 const Therapists = () => {
   const { user, signOut } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTherapist, setSelectedTherapist] = useState<Therapist | null>(null);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
+
+  const handleBookNow = (therapist: Therapist) => {
+    setSelectedTherapist(therapist);
+    setIsBookingOpen(true);
+  };
 
   const therapists = [
     {
@@ -196,13 +217,21 @@ const Therapists = () => {
 
                 <div className="flex items-center justify-between pt-4 border-t border-border">
                   <span className="font-semibold text-foreground">{therapist.price}</span>
-                  <Button variant="wellness" size="sm">Book Now</Button>
+                  <Button variant="wellness" size="sm" onClick={() => handleBookNow(therapist)}>
+                    Book Now
+                  </Button>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
       </main>
+
+      <BookingModal
+        therapist={selectedTherapist}
+        isOpen={isBookingOpen}
+        onClose={() => setIsBookingOpen(false)}
+      />
     </div>
   );
 };

@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      bookings: {
+        Row: {
+          booking_date: string
+          booking_time: string
+          created_at: string | null
+          id: string
+          notes: string | null
+          price: string
+          status: string | null
+          therapist_name: string
+          therapy_type: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          booking_date: string
+          booking_time: string
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          price: string
+          status?: string | null
+          therapist_name: string
+          therapy_type: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          booking_date?: string
+          booking_time?: string
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          price?: string
+          status?: string | null
+          therapist_name?: string
+          therapy_type?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
