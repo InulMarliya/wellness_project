@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import AuthHero from "@/components/auth/AuthHero";
 import LoginForm from "@/components/auth/LoginForm";
 import RegisterForm from "@/components/auth/RegisterForm";
@@ -8,6 +10,15 @@ type AuthView = "login" | "register" | "forgot-password";
 
 const Auth = () => {
   const [view, setView] = useState<AuthView>("login");
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (!loading && user) {
+      navigate("/dashboard");
+    }
+  }, [user, loading, navigate]);
 
   const getTitle = () => {
     switch (view) {

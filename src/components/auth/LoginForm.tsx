@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Mail, Lock, Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 interface LoginFormProps {
   onSwitchToRegister: () => void;
@@ -16,6 +18,8 @@ const LoginForm = ({ onSwitchToRegister, onForgotPassword }: LoginFormProps) => 
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const { signIn } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,14 +35,26 @@ const LoginForm = ({ onSwitchToRegister, onForgotPassword }: LoginFormProps) => 
 
     setIsLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+    const { error } = await signIn(email, password);
+    
+    setIsLoading(false);
+    
+    if (error) {
       toast({
-        title: "Welcome back!",
-        description: "You have successfully logged in.",
+        title: "Login Failed",
+        description: error.message === "Invalid login credentials" 
+          ? "Invalid email or password. Please try again." 
+          : error.message,
+        variant: "destructive",
       });
-    }, 1500);
+      return;
+    }
+    
+    toast({
+      title: "Welcome back!",
+      description: "You have successfully logged in.",
+    });
+    navigate("/dashboard");
   };
 
   return (
