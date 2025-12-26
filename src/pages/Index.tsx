@@ -6,6 +6,9 @@ import wellnessMeditation from "@/assets/wellness-meditation.jpg";
 import wellnessOils from "@/assets/wellness-oils.jpg";
 import wellnessAcupuncture from "@/assets/wellness-acupuncture.jpg";
 import wellnessHerbs from "@/assets/wellness-herbs.jpg";
+import ProductsSection from "@/components/ProductsSection";
+import QASection from "@/components/QASection";
+import ReviewsSection from "@/components/ReviewsSection";
 
 const features = [
   {
@@ -56,11 +59,14 @@ const Index = () => {
               <a href="#therapies" className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium">
                 Therapies
               </a>
-              <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium">
-                Features
+              <a href="#products" className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium">
+                Products
               </a>
-              <a href="#gallery" className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium">
-                Gallery
+              <a href="#qa" className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium">
+                Q&A
+              </a>
+              <a href="#reviews" className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium">
+                Reviews
               </a>
             </div>
             <div className="flex items-center gap-3">
@@ -216,6 +222,9 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Products Section */}
+      <ProductsSection />
+
       {/* Gallery Section */}
       <section id="gallery" className="py-20 lg:py-28">
         <div className="container mx-auto px-4 lg:px-8">
@@ -303,6 +312,12 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Q&A Section */}
+      <QASection />
+
+      {/* Reviews Section */}
+      <ReviewsSection />
 
       {/* CTA Section */}
       <section className="py-20 lg:py-28 bg-primary relative overflow-hidden">
