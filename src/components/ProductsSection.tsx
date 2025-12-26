@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Plus, Minus, X, Package } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { ShoppingCart, Plus, Minus, X, Package, Search, SlidersHorizontal } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -10,6 +11,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Product {
   id: string;
@@ -33,7 +41,54 @@ const ProductsSection = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<string>("newest");
   const { toast } = useToast();
+
+  // Get unique categories from products
+  const categories = useMemo(() => {
+    const cats = [...new Set(products.map(p => p.category))];
+    return cats.sort();
+  }, [products]);
+
+  // Filter and sort products
+  const filteredProducts = useMemo(() => {
+    let result = [...products];
+
+    // Filter by search
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(p =>
+        p.name.toLowerCase().includes(query) ||
+        p.description?.toLowerCase().includes(query)
+      );
+    }
+
+    // Filter by category
+    if (selectedCategory !== "all") {
+      result = result.filter(p => p.category === selectedCategory);
+    }
+
+    // Sort
+    switch (sortBy) {
+      case "price-low":
+        result.sort((a, b) => a.price - b.price);
+        break;
+      case "price-high":
+        result.sort((a, b) => b.price - a.price);
+        break;
+      case "name":
+        result.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case "newest":
+      default:
+        // Already sorted by created_at from API
+        break;
+    }
+
+    return result;
+  }, [products, searchQuery, selectedCategory, sortBy]);
 
   useEffect(() => {
     fetchProducts();
@@ -164,7 +219,7 @@ const ProductsSection = () => {
   return (
     <section id="products" className="py-20 lg:py-28 bg-secondary/30">
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="flex justify-between items-center mb-12">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
           <div>
             <h2 className="font-display text-3xl lg:text-4xl font-bold text-foreground mb-4">
               Wellness Products
@@ -254,8 +309,67 @@ const ProductsSection = () => {
           </Sheet>
         </div>
 
+        {/* Search and Filters */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-8">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <div className="flex gap-3">
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger className="w-[150px]">
+                <SlidersHorizontal className="h-4 w-4 mr-2" />
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                {categories.map((cat) => (
+                  <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="newest">Newest</SelectItem>
+                <SelectItem value="price-low">Price: Low to High</SelectItem>
+                <SelectItem value="price-high">Price: High to Low</SelectItem>
+                <SelectItem value="name">Name A-Z</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {/* Results count */}
+        <p className="text-sm text-muted-foreground mb-6">
+          Showing {filteredProducts.length} of {products.length} products
+        </p>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((product, index) => (
+          {filteredProducts.length === 0 ? (
+            <div className="col-span-full text-center py-12">
+              <Package className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+              <p className="text-muted-foreground">No products found matching your criteria</p>
+              <Button 
+                variant="outline" 
+                className="mt-4"
+                onClick={() => {
+                  setSearchQuery("");
+                  setSelectedCategory("all");
+                }}
+              >
+                Clear filters
+              </Button>
+            </div>
+          ) : (
+            filteredProducts.map((product, index) => (
             <div
               key={product.id}
               className="bg-card rounded-2xl overflow-hidden shadow-soft hover:shadow-medium transition-all duration-300 border border-border animate-fade-in"
@@ -283,7 +397,8 @@ const ProductsSection = () => {
                 </div>
               </div>
             </div>
-          ))}
+          ))
+          )}
         </div>
       </div>
     </section>
