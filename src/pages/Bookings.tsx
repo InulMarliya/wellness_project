@@ -71,6 +71,8 @@ const Bookings = () => {
             <Link to="/dashboard" className="text-muted-foreground hover:text-foreground transition-colors">Dashboard</Link>
             <Link to="/therapists" className="text-muted-foreground hover:text-foreground transition-colors">Therapists</Link>
             <Link to="/bookings" className="text-primary font-medium">Bookings</Link>
+            <Link to="/#products" className="text-muted-foreground hover:text-foreground transition-colors">Products</Link>
+            <Link to="/#qa" className="text-muted-foreground hover:text-foreground transition-colors">Q&A</Link>
           </nav>
 
           <div className="flex items-center gap-4">
