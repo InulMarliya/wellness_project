@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Leaf, ArrowRight, Star, Shield, Calendar, Users, Sparkles, Heart } from "lucide-react";
+import { Leaf, ArrowRight, Star, Shield, Calendar, Users, Sparkles, Heart, LogOut, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import wellnessHero from "@/assets/wellness-hero.jpg";
 import wellnessMeditation from "@/assets/wellness-meditation.jpg";
@@ -9,6 +9,7 @@ import wellnessHerbs from "@/assets/wellness-herbs.jpg";
 import ProductsSection from "@/components/ProductsSection";
 import QASection from "@/components/QASection";
 import ReviewsSection from "@/components/ReviewsSection";
+import { useAuth } from "@/hooks/useAuth";
 
 const features = [
   {
@@ -43,6 +44,8 @@ const therapies = [
 ];
 
 const Index = () => {
+  const { user, signOut } = useAuth();
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
@@ -70,12 +73,29 @@ const Index = () => {
               </a>
             </div>
             <div className="flex items-center gap-3">
-              <Link to="/auth">
-                <Button variant="ghost" size="sm">Sign In</Button>
-              </Link>
-              <Link to="/auth">
-                <Button variant="wellness" size="sm">Get Started</Button>
-              </Link>
+              {user ? (
+                <>
+                  <Link to="/dashboard">
+                    <Button variant="ghost" size="sm" className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      {user.user_metadata?.full_name || user.email?.split('@')[0]}
+                    </Button>
+                  </Link>
+                  <Button variant="outline" size="sm" onClick={signOut} className="flex items-center gap-2">
+                    <LogOut className="h-4 w-4" />
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link to="/auth">
+                    <Button variant="ghost" size="sm">Sign In</Button>
+                  </Link>
+                  <Link to="/auth">
+                    <Button variant="wellness" size="sm">Get Started</Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
