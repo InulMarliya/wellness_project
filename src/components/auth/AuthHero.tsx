@@ -1,4 +1,4 @@
-import { Leaf, Sparkles, Heart, Star } from "lucide-react";
+import { Leaf, Sparkles, Heart, Star } from "lucide-react"; 
 import wellnessHero from "@/assets/wellness-hero.jpg";
 import wellnessMeditation from "@/assets/wellness-meditation.jpg";
 import wellnessOils from "@/assets/wellness-oils.jpg";
