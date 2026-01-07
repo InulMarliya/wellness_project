@@ -1,4 +1,4 @@
--- Create profiles table for user data
+ -- Create profiles table for user data
 CREATE TABLE public.profiles (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL UNIQUE,
