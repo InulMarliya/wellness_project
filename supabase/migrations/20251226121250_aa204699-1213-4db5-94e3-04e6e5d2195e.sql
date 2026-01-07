@@ -1,4 +1,4 @@
--- Create products table
+-- Create products table--
 CREATE TABLE public.products (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT NOT NULL,
