@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"; 
 import { Leaf, ArrowRight, Star, Shield, Calendar, Users, Sparkles, Heart, LogOut, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import wellnessHero from "@/assets/wellness-hero.jpg";
